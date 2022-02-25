@@ -18,6 +18,11 @@ def _pattern2str(pat):
 class Pattern:
 
     def __init__(self, pattern='', escape=True):
+        '''
+        Creates a pattern object
+        - `pattern` (str) input (usually non-regex)
+        - escape (bool) whether to escape pattern using re.escape
+        '''
         if not isinstance(pattern, str):
             raise WordyRegexArgError('Expects input to be a `str` object')
         if escape:
@@ -25,10 +30,20 @@ class Pattern:
         self._pattern = pattern
 
 
+    def then(self, pat):
+        'returns a new pattern concatenating current one with `pat`'
+        return Pattern(self._pattern + _pattern2str(pat), 0)
+
+
     @staticmethod
     def lineStart():
         'creates a pattern that matches line start'
         return Pattern('^', 0)
+
+
+    def lineEnd(self):
+        'adds a line end'
+        return Pattern(self._pattern + '$', 0)
 
 
     @staticmethod
@@ -44,16 +59,6 @@ class Pattern:
 
     def __str__(self):
         return self._pattern
-
-
-    def then(self, pat):
-        'returns a new pattern concatenating current one with `pat`'
-        return Pattern(self._pattern + _pattern2str(pat), 0)
-
-
-    def lineEnd(self):
-        'adds a line end'
-        return Pattern(self._pattern + '$', 0)
 
 
     def succeededBy(self, pat):
