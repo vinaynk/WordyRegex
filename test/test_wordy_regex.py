@@ -93,6 +93,37 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(str(p2), '(hello){-4}')
 
 
+    def test_common(self):
+        # phone number of kind
+        # (8776) 786-7823 # brackets, - are optional
+        part1 = Pattern('(').group(name='opbrkt').optional() \
+                    .then(Special.digit.repeat(exact=4)) \
+                    .then(Pattern.condGroupMatch('opbrkt', ')',''))
+        part2 = Special.digit.repeat(exact=3) \
+                    .then(Pattern('-').optional()) \
+                    .then(Special.digit.repeat(exact=4))
+        combined = Pattern.lineStart().then(part1) \
+                    .then(Pattern(' ').optional()) \
+                    .then(part2).lineEnd()
+        comb = combined.compile()
+        testset = [ '(7653) 789-8706', '73657768899', '9891 2312828',
+                   '(0999)222-4444' , '4567 222-3300' ]
+        for test in testset:
+            m = comb.search(test)
+            if m:
+                g = m.group(0)
+                self.assertEqual(g, test)
+        testset = [ '(7653 789-8706', '736578768899', '9891 231 2828',
+                    '0999)222-4444' , '0 4567 222-3300',
+                    '(7653) 789=8706', '736577688990', '9891 (2312)828',
+                    '(0999)222-44440' , '4567  222-3300',
+                    '(7653) 789 8706', '7365.776.8899', '0(9891) 231-2828' ]
+        for test in testset:
+            m = comb.search(test)
+            self.assertEqual(None, m)
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

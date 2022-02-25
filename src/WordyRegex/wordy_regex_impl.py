@@ -128,7 +128,13 @@ class Pattern:
     @staticmethod
     def anyOf(*agrs):
         parts = [ _pattern2str(it) for it in args ]
-        return Pattern('|'.join(parts))
+        return Pattern('|'.join(parts), 0)
+
+
+    @staticmethod
+    def seq(*args):
+        parts = [ _pattern2str(it) for it in args ]
+        return Pattern(''.join(parts), 0)
 
 
     def compile(self, flags=0):
@@ -137,16 +143,16 @@ class Pattern:
 
 
 class Special:
-    strStart = Pattern(r'\A')
-    strEnd   = Pattern(r'\Z')
-    digit    = Pattern(r'\d')
-    nonDigit = Pattern(r'\D')
-    space    = Pattern(r'\s')
-    nonSpace = Pattern(r'\S')
-    wordchar    = Pattern(r'\w')
-    nonWordchar = Pattern(r'\W')
-    wordBoundary    = Pattern(r'\b')
-    nonWordBoundary = Pattern(r'\B')
+    strStart = Pattern(r'\A', 0)
+    strEnd   = Pattern(r'\Z', 0)
+    digit    = Pattern(r'\d', 0)
+    nonDigit = Pattern(r'\D', 0)
+    space    = Pattern(r'\s', 0)
+    nonSpace = Pattern(r'\S', 0)
+    wordchar    = Pattern(r'\w', 0)
+    nonWordchar = Pattern(r'\W', 0)
+    wordBoundary    = Pattern(r'\b', 0)
+    nonWordBoundary = Pattern(r'\B', 0)
 
 
 class CharSet:
