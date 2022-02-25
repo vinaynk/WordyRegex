@@ -7,7 +7,7 @@ import unittest
 
 moduleDir = os.path.abspath( os.path.dirname( __file__ ) + '/../src/' )
 sys.path.insert(0, moduleDir)
-from WordyRegex import WordyRegexArgError, Pattern, Special
+from WordyRegex import WordyRegexArgError, Pattern, Special, CharSet
 
 
 class TestStringMethods(unittest.TestCase):
@@ -72,6 +72,25 @@ class TestStringMethods(unittest.TestCase):
         p4 = Pattern.condGroupMatch('word', 'a+b', 'c*d')
         self.assertEqual(str(p4), r'(?(word)a\+b|c\*d)')
 
+
+    def test_charset(self):
+        pat = CharSet.charset('_', alphanum=True)
+        self.assertEqual(str(pat), '[0-9a-zA-Z_]')
+        pat = CharSet.charset('-', digit=True, reverse=True)
+        self.assertEqual(str(pat), r'[^0-9\-]')
+        pat = CharSet.charset('-^_', lower=True)
+        self.assertEqual(str(pat), r'[a-z\-\^_]')
+
+
+    def test_repeat(self):
+        p1 = Pattern('hello').group()
+        self.assertEqual(str(p1), '(hello)')
+        p2 = p1.repeat(exact=3)
+        self.assertEqual(str(p2), '(hello){3}')
+        p2 = p1.repeat(min=3, greedy=False)
+        self.assertEqual(str(p2), '(hello){3-}?')
+        p2 = p1.repeat(max=4)
+        self.assertEqual(str(p2), '(hello){-4}')
 
 
 

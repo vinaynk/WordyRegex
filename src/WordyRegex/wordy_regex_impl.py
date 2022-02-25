@@ -112,10 +112,28 @@ class Pattern:
         return Pattern(f'{self._pattern}?{qm}', 0)
 
 
+    def optional(self, greedy=True):
+        return self.zeroOrOne(greedy)
+
+
+    def repeat(self, exact='', min='', max='', greedy=True):
+        if min != '' and max != '' and int(min) >= int(max):
+            raise WordyRegexArgError(f'{min=} should be smaller than {max=}')
+        qm = '' if greedy else '?'
+        if exact :
+            return Pattern(f'{self._pattern}{{{exact}}}', 0)
+        return Pattern(f'{self._pattern}{{{min}-{max}}}{qm}', 0)
+
+
     @staticmethod
     def anyOf(*agrs):
         parts = [ _pattern2str(it) for it in args ]
         return Pattern('|'.join(parts))
+
+
+    def compile(self, flags=0):
+        return re.compile(self._pattern, flags)
+
 
 
 class Special:
@@ -135,7 +153,8 @@ class CharSet:
 
     @staticmethod
     def _escape(pat):
-        escapeNeeded = r'^\-]'
+        escapeNeeded = r'^-]'
+        pat = pat.replace('\\', '\\\\')
         for ch in escapeNeeded:
             pat = pat.replace(ch, '\\'+ch)
         return pat
@@ -144,7 +163,7 @@ class CharSet:
     @staticmethod
     def charset(pat='', digit=False, lower=False, upper=False,
                 reverse=False, alphanum=False):
-        pat  = CharSet.escape(pat)
+        pat  = CharSet._escape(pat)
         expr = ''
         if alphanum:
             expr += '0-9a-zA-Z'
