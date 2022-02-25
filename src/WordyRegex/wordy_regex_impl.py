@@ -27,15 +27,18 @@ class Pattern:
 
     @staticmethod
     def lineStart():
+        'creates a pattern that matches line start'
         return Pattern('^', 0)
 
 
     @staticmethod
     def anyChar():
+        'creates a pattern that match any single char'
         return Pattern('.', 0)
 
 
     def getPattern(self):
+        'get the regex patten of this Pattern object'
         return self._pattern
 
 
@@ -44,34 +47,55 @@ class Pattern:
 
 
     def then(self, pat):
+        'returns a new pattern concatenating current one with `pat`'
         return Pattern(self._pattern + _pattern2str(pat), 0)
 
 
     def lineEnd(self):
+        'adds a line end'
         return Pattern(self._pattern + '$', 0)
 
 
     def succeededBy(self, pat):
+        '''
+        specifies that current pattern should be succeeded by `pat`
+        - does not absorb `pat` in matching
+        '''
         pat = _pattern2str(pat)
         return Pattern(self._pattern + f'(?={pat})', 0)
 
 
     def succeededByNot(self, pat):
+        '''
+        specifies that current pattern should not be succeeded by `pat`
+        - does not absorb `pat` in matching
+        '''
         pat = _pattern2str(pat)
         return Pattern(self._pattern + f'(?!{pat})', 0)
 
 
-    def preceededBy(self, pat):
+    @staticmethod
+    def preceededBy(pat):
+        '''
+        specifies that current pattern should be preceeded by `pat`
+        - does not absorb `pat` in matching
+        '''
         pat = _pattern2str(pat)
-        return Pattern(f'(?<={pat})' + self._pattern, 0)
+        return Pattern(f'(?<={pat})', 0)
 
 
-    def preceededByNot(self, pat):
+    @staticmethod
+    def preceededByNot(pat):
+        '''
+        specifies that current pattern should not be preceeded by `pat`
+        - does not absorb `pat` in matching
+        '''
         pat = _pattern2str(pat)
-        return Pattern(f'(?<!{pat})' + self._pattern, 0)
+        return Pattern(f'(?<!{pat})', 0)
 
 
     def group(self, name=None, catch=True):
+        'groups the current pattern'
         if not catch:
             return Pattern(f'(?:{self._pattern})', 0)
         tgn = ''
@@ -82,37 +106,44 @@ class Pattern:
 
     @staticmethod
     def backrefByName(name):
+        'back reference a group by name'
         return Pattern(f'(?P={name})', 0)
 
 
     @staticmethod
     def backrefById(bid):
+        'back reference a group by id'
         return Pattern(f'\\{bid}', 0)
 
 
     @staticmethod
     def condGroupMatch(name, pat1, pat2=''):
+        'conditionally match group with given `name` to `pat1` or `pat2`'
         pat1 = _pattern2str(pat1)
         pat2 = _pattern2str(pat2)
         return Pattern(f'(?({name}){pat1}|{pat2})', 0)
 
 
     def zeroOrMore(self, greedy=True):
+        'zero or more repeats of current pattern (if grouped)'
         qm = '' if greedy else '?'
         return Pattern(f'{self._pattern}*{qm}', 0)
 
 
     def oneOrMore(self, greedy=True):
+        'one or more repeats of current pattern (if grouped)'
         qm = '' if greedy else '?'
         return Pattern(f'{self._pattern}+{qm}', 0)
 
 
     def zeroOrOne(self, greedy=True):
+        'zero or one repeats of current pattern (if grouped)'
         qm = '' if greedy else '?'
         return Pattern(f'{self._pattern}?{qm}', 0)
 
 
     def optional(self, greedy=True):
+        'current pattern (if groupd) is optional'
         return self.zeroOrOne(greedy)
 
 
@@ -126,18 +157,24 @@ class Pattern:
 
 
     @staticmethod
-    def anyOf(*agrs):
+    def anyOf(*args, group=True):
+        'create regex that matches any of the supplied patterns'
         parts = [ _pattern2str(it) for it in args ]
-        return Pattern('|'.join(parts), 0)
+        joined = '|'.join(parts)
+        if group:
+            joined = f'({joined})'
+        return Pattern(joined, 0)
 
 
     @staticmethod
     def seq(*args):
+        'concatenates supplied patterns'
         parts = [ _pattern2str(it) for it in args ]
         return Pattern(''.join(parts), 0)
 
 
     def compile(self, flags=0):
+        'compile the current pattern'
         return re.compile(self._pattern, flags)
 
 
@@ -153,6 +190,9 @@ class Special:
     nonWordchar = Pattern(r'\W', 0)
     wordBoundary    = Pattern(r'\b', 0)
     nonWordBoundary = Pattern(r'\B', 0)
+    lineStart       = Pattern('^', 0)
+    lineEnd = Pattern('$', 0)
+    anyChar = Pattern('.', 0)
 
 
 class CharSet:
@@ -169,6 +209,7 @@ class CharSet:
     @staticmethod
     def charset(pat='', digit=False, lower=False, upper=False,
                 reverse=False, alphanum=False):
+        'creates a charset'
         pat  = CharSet._escape(pat)
         expr = ''
         if alphanum:

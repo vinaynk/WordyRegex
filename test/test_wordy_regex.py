@@ -37,11 +37,11 @@ class TestStringMethods(unittest.TestCase):
         rp1 = p1.getPattern()
         self.assertEqual(rp1, r'hello(?!\ world)')
 
-        p1  = Pattern('world').preceededBy('hello ')
+        p1  = Pattern.preceededBy('hello ').then('world')
         rp1 = p1.getPattern()
         self.assertEqual(rp1, r'(?<=hello\ )world')
 
-        p1  = Pattern('world').preceededByNot('hello ')
+        p1  = Pattern.preceededByNot('hello ').then('world')
         rp1 = p1.getPattern()
         self.assertEqual(rp1, r'(?<!hello\ )world')
 
