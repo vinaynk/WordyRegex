@@ -183,24 +183,21 @@ class Pattern:
         return re.compile(self._pattern, flags)
 
 
+class CharSet:
 
-class Special:
     strStart = Pattern(r'\A', 0)
     strEnd   = Pattern(r'\Z', 0)
     digit    = Pattern(r'\d', 0)
     nonDigit = Pattern(r'\D', 0)
     space    = Pattern(r'\s', 0)
     nonSpace = Pattern(r'\S', 0)
-    wordchar    = Pattern(r'\w', 0)
-    nonWordchar = Pattern(r'\W', 0)
+    wordChar    = Pattern(r'\w', 0)
+    nonWordChar = Pattern(r'\W', 0)
     wordBoundary    = Pattern(r'\b', 0)
     nonWordBoundary = Pattern(r'\B', 0)
     lineStart       = Pattern('^', 0)
     lineEnd = Pattern('$', 0)
     anyChar = Pattern('.', 0)
-
-
-class CharSet:
 
     @staticmethod
     def _escape(pat):

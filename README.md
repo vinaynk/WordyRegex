@@ -12,8 +12,7 @@ I wrote this library as a training tool for regex. This library is not something
 This module exposes the following classes.
 
 1. `Pattern` - The main class that deals with creating and chaining different patterns
-2. `Special` - A support class that supports built-in special characters used in regex
-3. `CharSet` - A support class to create character set used in regex
+2. `CharSet` - A support class to create character set used in regex
 
 Checkout the `example/` directory to see how these classes are used.
 
@@ -63,9 +62,20 @@ Notes:
 1. These functions accept a keyword `greedy` which can be used to control the greedy behaviour. Must be used after group() to work as expected.
 
 
-### class Special
+### class CharSet
 
-A class with static members, all with special meaning
+This class creates a CharSet (`[]`). Following is the constructor:
+
+`CharSet(pat='', digit=False, lower=False, upper=False, reverse=False, alphanum=False)`
+
+- `pat` : string of characters that need to be added to the charset
+- `digit` : if True, adds `0-9` to charset
+- `lower` : if True, adds `a-z` to charset
+- `upper` : if True, adds `A-Z` to charset
+- `alphanum` : if True, adds `0-9a-zA-Z` to charset
+- `reverse` : if True, charset is reversed by adding `^` at the start
+
+Additionally, this class also provides builtin special patterns. These are two types. First type maches empty string (but has 'special' meaning) and the second type matches 1 char.
 
 Following matches start, end, or boundaries. Matches only empty string.
 
@@ -83,22 +93,6 @@ Following matches a single char.
 - `nonDigit` (`\D`) reverse of the above
 - `space` (`\s`) for space (inc. tabs, newline etc)
 - `nonSpace` (`\S`) reverse of the above
-- `wordchar` (`\w`) part of word
-- `nonWordchar` (`\W`) reverse of the above
-
-
-### class CharSet
-
-This class creates a CharSet (`[]`). Following is the constructor:
-
-`CharSet(pat='', digit=False, lower=False, upper=False, reverse=False, alphanum=False)`
-
-- `pat` : string of characters that need to be added to the charset
-- `digit` : if True, adds `0-9` to charset
-- `lower` : if True, adds `a-z` to charset
-- `upper` : if True, adds `A-Z` to charset
-- `alphanum` : if True, adds `0-9a-zA-Z` to charset
-- `reverse` : if True, charset is reversed by adding `^` at the start
-
-
+- `wordChar` (`\w`) part of word
+- `nonWordChar` (`\W`) reverse of the above
 

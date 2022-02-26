@@ -7,7 +7,7 @@ import unittest
 
 moduleDir = os.path.abspath( os.path.dirname( __file__ ) + '/../src/' )
 sys.path.insert(0, moduleDir)
-from WordyRegex import WordyRegexArgError, Pattern, Special, CharSet
+from WordyRegex import WordyRegexArgError, Pattern, CharSet
 
 
 class TestStringMethods(unittest.TestCase):
@@ -97,11 +97,11 @@ class TestStringMethods(unittest.TestCase):
         # phone number of kind
         # (8776) 786-7823 # brackets, - are optional
         part1 = Pattern('(').group(name='opbrkt').optional() \
-                    .then(Special.digit.repeat(exact=4)) \
+                    .then(CharSet.digit.repeat(exact=4)) \
                     .then(Pattern.condGroupMatch('opbrkt', ')',''))
-        part2 = Special.digit.repeat(exact=3) \
+        part2 = CharSet.digit.repeat(exact=3) \
                     .then(Pattern('-').optional()) \
-                    .then(Special.digit.repeat(exact=4))
+                    .then(CharSet.digit.repeat(exact=4))
         combined = Pattern.lineStart().then(part1) \
                     .then(Pattern(' ').optional()) \
                     .then(part2).lineEnd()
