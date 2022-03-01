@@ -14,6 +14,15 @@ Did you notice that zero?
 We don't forget that zero,
 that is the amount of life we have'''
 
+emails = \
+'''
+hello8799@gmail.com
+mail-me@hotmail.co.uk
+Big_Bang@t-online.de
+BOOM@abc.k-x.de
+ding.dong@mmm-NN.CO.in
+'''
+
 
 def searchPrintResults(pat, text, flags=re.MULTILINE):
     cpat = pat.compile(flags)
@@ -49,12 +58,24 @@ def egAnchor():
     print('strEnd - last word of a string')
     lastWord = CharSet.wordBoundary.then(CharSet.nonSpace.oneOrMore()) \
                                    .then(CharSet.strEnd)
+    searchPrintResults(lastWord, testData1)
 
 
-
-
-
-
+def emailCheck():
+    # gmail, t-online, yahoo etc
+    domainMain = CharSet.charset('_-', alphanum=True).oneOrMore()
+    # .com, .co.in, .co.uk, .de etc
+    domainRpt  = Pattern('.').then(CharSet.charset(alphanum=True) \
+                             .repeat(min=2,max=4)) \
+                             .group() \
+                             .oneOrMore()
+    # gmail.com, t-online.de, hotmail.co.uk etc
+    domain     = domainMain.then(domainRpt)
+    # this is the part before @
+    username   = CharSet.charset('-_.', alphanum=True).oneOrMore()
+    # full email
+    fullemail  = username.then('@').then(domain)
+    searchPrintResults(fullemail, emails)
 
 
 def wordlike(pattern):
@@ -94,7 +115,8 @@ def egNumbers():
 
 
 def main():
-    egAnchor()
+    # egAnchor()
+    emailCheck()
 
 
 

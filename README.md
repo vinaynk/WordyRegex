@@ -7,6 +7,26 @@ The key idea is to provide functions to do most (if not all) of the regex relate
 #### Note
 I wrote this library as a training tool for regex. This library is not something one should add to any production system, even when they are drunk or high.
 
+## Examples
+
+Here is an example check for email-ids (well, for most email-ids anyway):
+
+```python
+# gmail, t-online, yahoo etc
+domainMain = CharSet.charset('_-', alphanum=True).oneOrMore()
+# .com, .co.in, .co.uk, .de etc
+domainRpt  = Pattern('.').then(CharSet.charset(alphanum=True) \
+                         .repeat(min=2,max=4)) \
+                         .group() \
+                         .oneOrMore()
+# gmail.com, t-online.de, hotmail.co.uk etc
+domain     = domainMain.then(domainRpt)
+# this is the part before @
+username   = CharSet.charset('-_.', alphanum=True).oneOrMore()
+# full email
+fullemail  = username.then('@').then(domain)
+print(str(fullemail))
+```
 
 ## Classes
 This module exposes the following classes.

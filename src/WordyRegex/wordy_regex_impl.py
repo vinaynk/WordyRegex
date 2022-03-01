@@ -158,7 +158,7 @@ class Pattern:
         qm = '' if greedy else '?'
         if exact :
             return Pattern(f'{self._pattern}{{{exact}}}', 0)
-        return Pattern(f'{self._pattern}{{{min}-{max}}}{qm}', 0)
+        return Pattern(f'{self._pattern}{{{min},{max}}}{qm}', 0)
 
 
     @staticmethod
